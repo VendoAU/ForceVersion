@@ -33,7 +33,6 @@ allprojects {
     dependencies {
         implementation("net.kyori:adventure-text-minimessage:4.12.0")
         implementation("org.spongepowered:configurate-yaml:4.1.2")
-        compileOnly("com.viaversion:viaversion-api:4.5.1")
     }
 
     blossom {

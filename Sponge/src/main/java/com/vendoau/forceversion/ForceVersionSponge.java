@@ -11,6 +11,8 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.RefreshGameEvent;
 import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 import org.spongepowered.api.event.network.ServerSideConnectionEvent;
+import org.spongepowered.api.event.server.ClientPingServerEvent;
+import org.spongepowered.api.network.status.StatusClient;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 
@@ -62,4 +64,7 @@ public class ForceVersionSponge {
 
         player.kick(configManager.getKickMessage());
     }
+
+    // TODO: Modify ClientPingServerEvent version
+    // As far as I can tell this is not really possible to do yet
 }

@@ -20,6 +20,9 @@ public class ConfigManager {
 
     private final YamlConfigurationLoader configLoader;
 
+    private int serverPingVersion;
+    private String serverPingVersionName;
+
     private Component messagePrefix;
     private ServerInfo global;
     private final List<ServerInfo> infoList = new ArrayList<>();
@@ -39,6 +42,9 @@ public class ConfigManager {
 
     public void loadConfig() throws ConfigurateException {
         final CommentedConfigurationNode config = configLoader.load();
+
+        serverPingVersion = config.node("serverPing").node("version").getInt();
+        serverPingVersionName = config.node("serverPing").node("versionName").getString();
 
         messagePrefix = MiniMessage.miniMessage().deserialize(config.node("messagePrefix").getString());
         global = getServerInfo(config.node("global"));
@@ -103,5 +109,13 @@ public class ConfigManager {
             }
         }
         return global;
+    }
+
+    public int getServerPingVersion() {
+        return serverPingVersion;
+    }
+
+    public @Nullable String getServerPingVersionName() {
+        return serverPingVersionName;
     }
 }

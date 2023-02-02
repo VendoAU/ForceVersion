@@ -1,10 +1,11 @@
 package com.vendoau.forceversion;
 
-import com.viaversion.viaversion.api.Via;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -12,7 +13,6 @@ import net.md_5.bungee.event.EventHandler;
 import org.bstats.bungeecord.Metrics;
 
 import java.io.IOException;
-import java.util.UUID;
 
 public class ForceVersionBungee extends Plugin implements Listener {
 
@@ -31,9 +31,8 @@ public class ForceVersionBungee extends Plugin implements Listener {
     }
 
     @EventHandler
-    public void onLogin(LoginEvent event) {
-        final UUID uuid = event.getConnection().getUniqueId();
-        final int version = Via.getAPI().getPlayerVersion(uuid);
+    public void onPreLogin(PreLoginEvent event) {
+        final int version = event.getConnection().getVersion();
         if (configManager.canJoinServer(version)) return;
 
         event.setCancelled(true);
@@ -44,7 +43,7 @@ public class ForceVersionBungee extends Plugin implements Listener {
     @EventHandler
     public void onServerConnect(ServerConnectEvent event) {
         final ProxiedPlayer player = event.getPlayer();
-        final int version = Via.getAPI().getPlayerVersion(player.getUniqueId());
+        final int version = player.getPendingConnection().getVersion();
         final String server = event.getTarget().getName();
         if (configManager.canJoinServer(server, version)) return;
 
@@ -55,5 +54,23 @@ public class ForceVersionBungee extends Plugin implements Listener {
             player.disconnect(message);
         }
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onProxyPing(ProxyPingEvent event) {
+        final ServerPing response = event.getResponse();
+        final int version = event.getConnection().getVersion();
+
+        if (configManager.canJoinServer(version)) return;
+
+        final int serverPingVersion = configManager.getServerPingVersion();
+        final String serverPingVersionName = configManager.getServerPingVersionName();
+        if (serverPingVersionName == null) {
+            response.setVersion(new ServerPing.Protocol(response.getVersion().getName(), serverPingVersion));
+        } else {
+            response.setVersion(new ServerPing.Protocol(serverPingVersionName, serverPingVersion));
+        }
+
+        event.setResponse(response);
     }
 }

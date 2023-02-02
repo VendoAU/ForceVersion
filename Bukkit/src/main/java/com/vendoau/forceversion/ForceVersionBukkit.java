@@ -37,4 +37,7 @@ public class ForceVersionBukkit extends JavaPlugin implements Listener {
         final String message = BukkitComponentSerializer.legacy().serialize(configManager.getKickMessage());
         player.kickPlayer(message);
     }
+
+    // TODO: Modify ServerListPingEvent version
+    // As far as I can tell this is not really possible to do yet
 }

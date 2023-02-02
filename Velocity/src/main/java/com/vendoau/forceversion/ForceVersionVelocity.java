@@ -2,13 +2,14 @@ package com.vendoau.forceversion;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.PreLoginEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
-import com.velocitypowered.api.plugin.Dependency;
+import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
-import com.viaversion.viaversion.api.Via;
+import com.velocitypowered.api.proxy.server.ServerPing;
 import net.kyori.adventure.text.Component;
 import org.bstats.velocity.Metrics;
 
@@ -22,8 +23,7 @@ import java.util.logging.Logger;
         description = "${description}",
         version = "${version}",
         authors = "VendoAU",
-        url = "${website}",
-        dependencies = @Dependency(id = "viaversion")
+        url = "${website}"
 )
 public class ForceVersionVelocity {
 
@@ -52,10 +52,18 @@ public class ForceVersionVelocity {
     }
 
     @Subscribe
-    public void onPlayerJoin(ServerPreConnectEvent event) {
+    public void onPreLogin(PreLoginEvent event) {
+        final int version = event.getConnection().getProtocolVersion().getProtocol();
+        if (configManager.canJoinServer(version)) return;
+
+        event.setResult(PreLoginEvent.PreLoginComponentResult.denied(configManager.getKickMessage()));
+    }
+
+    @Subscribe
+    public void onServerPreConnect(ServerPreConnectEvent event) {
         final Player player = event.getPlayer();
         final String server = event.getOriginalServer().getServerInfo().getName();
-        final int version = Via.getAPI().getPlayerVersion(player.getUniqueId());
+        final int version = player.getProtocolVersion().getProtocol();
         if (configManager.canJoinServer(server, version)) return;
 
         event.setResult(ServerPreConnectEvent.ServerResult.denied());
@@ -64,6 +72,23 @@ public class ForceVersionVelocity {
             player.sendMessage(message);
         } else {
             player.disconnect(message);
+        }
+    }
+
+    @Subscribe
+    public void onProxyPing(ProxyPingEvent event) {
+        final int version = event.getConnection().getProtocolVersion().getProtocol();
+        if (configManager.canJoinServer(version)) return;
+
+        final ServerPing ping = event.getPing();
+        final ServerPing.Builder builder = ping.asBuilder();
+
+        final int serverPingVersion = configManager.getServerPingVersion();
+        final String serverPingVersionName = configManager.getServerPingVersionName();
+        if (serverPingVersionName == null) {
+            builder.version(new ServerPing.Version(serverPingVersion, ping.getVersion().getName()));
+        } else {
+            builder.version(new ServerPing.Version(serverPingVersion, serverPingVersionName));
         }
     }
 }

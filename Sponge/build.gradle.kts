@@ -12,6 +12,7 @@ base {
 dependencies {
     implementation("org.bstats:bstats-sponge:3.0.0")
     compileOnly("org.spongepowered:spongeapi:8.1.0")
+    compileOnly("com.viaversion:viaversion-api:4.5.1")
     compileOnly(project(":Common"))
 }
 
