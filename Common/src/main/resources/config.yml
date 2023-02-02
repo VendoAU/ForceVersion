@@ -1,0 +1,23 @@
+# Find protocol version numbers here:
+# https://minecraft.fandom.com/wiki/Protocol_version#List_of_protocol_versions
+# Leave whitelist empty to allow all versions
+
+messagePrefix: "<dark_gray>[</dark_gray><aqua>ForceVersion</aqua><dark_gray>]</dark_gray> "
+
+global:
+  versionWhitelist: []
+  versionBlacklist: []
+  kickMessage: "All versions are allowed"
+
+# Add rules for as many servers as you want
+# Servers without rules will use the global rules
+servers:
+  # Here are some examples to get you started
+  example-server:
+    versionWhitelist: [759, 760, 761]
+    versionBlacklist: []
+    kickMessage: "Outdated client, please use Minecraft 1.19-1.19.3"
+  example-server-2:
+    versionWhitelist: []
+    versionBlacklist: [753]
+    kickMessage: "<red>Example 2 isn't available for Minecraft 1.16.3, please use a different version</red>"

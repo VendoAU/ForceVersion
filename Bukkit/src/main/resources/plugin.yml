@@ -1,0 +1,8 @@
+main: com.vendoau.forceversion.ForceVersionBukkit
+name: ForceVersion
+description: ${description}
+version: ${version}
+author: VendoAU
+website: ${website}
+depend:
+  - ViaVersion
