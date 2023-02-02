@@ -58,6 +58,7 @@ public class ForceVersionVelocity {
         final int version = Via.getAPI().getPlayerVersion(player.getUniqueId());
         if (configManager.canJoinServer(server, version)) return;
 
+        event.setResult(ServerPreConnectEvent.ServerResult.denied());
         final Component message = configManager.getKickMessage(server);
         if (player.isActive()) {
             player.sendMessage(message);
