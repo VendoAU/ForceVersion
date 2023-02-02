@@ -22,7 +22,7 @@ import java.util.logging.Logger;
         version = "${version}",
         authors = "VendoAU",
         url = "${website}",
-        dependencies = @Dependency(id = "ViaVersion")
+        dependencies = @Dependency(id = "viaversion")
 )
 public class ForceVersionVelocity {
 
