@@ -9,6 +9,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.viaversion.viaversion.api.Via;
+import net.kyori.adventure.text.Component;
 import org.bstats.velocity.Metrics;
 
 import java.io.IOException;
@@ -57,7 +58,11 @@ public class ForceVersionVelocity {
         final int version = Via.getAPI().getPlayerVersion(player.getUniqueId());
         if (configManager.canJoinServer(server, version)) return;
 
-        event.setResult(ServerPreConnectEvent.ServerResult.denied());
-        player.disconnect(configManager.getKickMessage(server));
+        final Component message = configManager.getKickMessage(server);
+        if (player.isActive()) {
+            player.sendMessage(message);
+        } else {
+            player.disconnect(message);
+        }
     }
 }
