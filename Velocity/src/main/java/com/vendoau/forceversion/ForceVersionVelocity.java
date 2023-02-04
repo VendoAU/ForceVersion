@@ -90,5 +90,6 @@ public class ForceVersionVelocity {
         } else {
             builder.version(new ServerPing.Version(serverPingVersion, serverPingVersionName));
         }
+        event.setPing(builder.build());
     }
 }
